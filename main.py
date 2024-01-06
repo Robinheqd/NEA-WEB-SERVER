@@ -31,6 +31,7 @@ def index():
 def server():
 	while True:
 		time.sleep(0.1)
+		global New_Group, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionName, auctionDescription, auctionStartPrice, auctionLength
 		if New_Group:
 			data = {
 			"action": "create-group",
@@ -69,6 +70,7 @@ def server():
 
 @app.route("/create-group", methods=['POST'])
 def group():
+	global New_Group, groupName, groupDescription, groupMaxFunds
 	groupName = request.json['Name']
 	groupDescription = request.json['Description']
 	groupMaxFunds = request.json['Max Funds']
