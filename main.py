@@ -37,7 +37,7 @@ def server():
 			"groupDescription": groupDescription,
 			"groupMaxFundsPerUser": groupMaxFunds
 			}
-			
+			New_Group = False
 			return json.dumps(data)
 		elif New_Auction_User:
 			data = {
@@ -45,7 +45,7 @@ def server():
 			"auctionMemberName": auctionMemberName,
 			"auctionMemberEmail": auctionMemberEmail
 			}
-			
+			New_Auction_User = False
 			return json.dumps(data)
 		elif New_Auction_Host:
 			data = {
@@ -53,7 +53,7 @@ def server():
 			"auctionHostName": auctionHostName,
 			"auctionHostEmail": auctionHostEmail
 			}
-			
+			New_Auction_Host = False
 			return json.dumps(data)
 		elif New_Auction:
 			data = {
@@ -63,6 +63,7 @@ def server():
 			"auctionStartPrice": auctionStart,
 			"auctionLength": auctionLength
 			}
+			New_Auction = False
 			return json.dumps(data)
 
 @app.route("/create-group", methods=['POST'])
@@ -72,6 +73,3 @@ def group():
 	groupMaxFunds = request.json['Max Funds']
 	New_Group = True
 	return True
-
-if __name__ == "__main__":
-	app.run(debug=True, threaded=True)
