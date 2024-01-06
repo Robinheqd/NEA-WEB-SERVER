@@ -73,3 +73,6 @@ def group():
 	groupMaxFunds = request.json['Max Funds']
 	New_Group = True
 	return True
+
+if __name__ == "__main__":
+	app.run(debug=True, threaded=True)
