@@ -70,6 +70,7 @@ def server():
 
 @app.route("/create-group", methods=['POST'])
 def group():
+	print(request.json)
 	global New_Group, groupName, groupDescription, groupMaxFunds
 	groupName = request.json['Name']
 	groupDescription = request.json['Description']
