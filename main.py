@@ -23,6 +23,10 @@ auctionDescription = ""
 auctionStartPrice = 0
 auctionLength = 0
 
+Create_Host_Error = False
+
+Create_Host_Success = False
+
 @app.route('/')
 def index():
 	return "Nothing to see here"
@@ -69,6 +73,16 @@ def server():
 			return json.dumps(data)
 		return "Nothing"
 
+@app.route("/check-host")
+def hostCheck():
+	While True:
+		time.sleep(0.001)
+		global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
+		if Create_Host_Success:
+			return "Success"
+		else:
+			return "Error"
+
 @app.route("/create-group", methods=['POST'])
 def group():
 	global New_Group, groupName, groupDescription, groupMaxFunds
@@ -93,6 +107,15 @@ def host():
 	auctionHostEmail = json.loads(request.json)['Email']
 	New_Auction_Host = True
 	return "Done"
+
+@app.route("/create-host", methods=['POST'])
+def validate():
+	global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
+	if json.loads(request.json)['Result'] == "Host-Created":
+		Create_Host_Success = True
+	elif json.loads(request.json)['Result'] == "Host-Exists":
+		Create_Host_Error = True
+	return "done"
 
 if __name__ == "__main__":
 	app.run(debug=True, threaded=True)
