@@ -86,5 +86,13 @@ def member():
 	New_Auction_User = True
 	return "Done"
 
+@app.route("/create-host", methods=['POST'])
+def host():
+	global New_Auction_Host, auctionHostName, auctionHostEmail
+	auctionHostName = json.loads(request.json)['Name']
+	auctionHostEmail = json.loads(request.json)['Email']
+	New_Auction_Host = True
+	return "Done"
+
 if __name__ == "__main__":
 	app.run(debug=True, threaded=True)
