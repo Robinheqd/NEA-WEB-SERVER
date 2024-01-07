@@ -67,6 +67,7 @@ def server():
 			}
 			New_Auction = False
 			return json.dumps(data)
+		return "Nothing"
 
 @app.route("/create-group", methods=['POST'])
 def group():
