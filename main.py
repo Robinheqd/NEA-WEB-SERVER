@@ -30,7 +30,7 @@ def index():
 @app.route('/server')
 def server():
 	while True:
-		time.sleep(0.1)
+		time.sleep(0.001)
 		global New_Group, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionName, auctionDescription, auctionStartPrice, auctionLength
 		if New_Group:
 			data = {
