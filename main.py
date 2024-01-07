@@ -80,8 +80,9 @@ def hostCheck():
 		global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
 		if Create_Host_Success:
 			return "Success"
-		else:
+		elif Create_Host_Error:
 			return "Error"
+		return "Nothing"
 
 @app.route("/create-group", methods=['POST'])
 def group():
