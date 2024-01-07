@@ -109,7 +109,7 @@ def host():
 	New_Auction_Host = True
 	return "Done"
 
-@app.route("/create-host", methods=['POST'])
+@app.route("/validate", methods=['POST'])
 def validate():
 	global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
 	if json.loads(request.json)['Result'] == "Host-Created":
