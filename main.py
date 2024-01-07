@@ -71,13 +71,20 @@ def server():
 
 @app.route("/create-group", methods=['POST'])
 def group():
-	print(request.json)
 	global New_Group, groupName, groupDescription, groupMaxFunds
 	groupName = json.loads(request.json)['Name']
 	groupDescription = json.loads(request.json)['Description']
 	groupMaxFunds = json.loads(request.json)['Max Funds']
 	New_Group = True
-	return True
+	return 'Done'
+
+@app.route("/create-member", methods=['POST'])
+def member():
+	global New_Auction_User, auctionMemberNamem auctionMemberEmail
+	auctionMemberName = json.loads(request.json)['Name']
+	auctionMemberEmail = json.loads(request.json)['Email']
+	New_Auction_User = True
+	return "Done"
 
 if __name__ == "__main__":
 	app.run(debug=True, threaded=True)
