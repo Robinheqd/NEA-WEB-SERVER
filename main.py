@@ -80,7 +80,7 @@ def group():
 
 @app.route("/create-member", methods=['POST'])
 def member():
-	global New_Auction_User, auctionMemberNamem auctionMemberEmail
+	global New_Auction_User, auctionMemberName, auctionMemberEmail
 	auctionMemberName = json.loads(request.json)['Name']
 	auctionMemberEmail = json.loads(request.json)['Email']
 	New_Auction_User = True
