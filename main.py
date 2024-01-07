@@ -79,8 +79,10 @@ def hostCheck():
 		time.sleep(0.001)
 		global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
 		if Create_Host_Success:
+			Create_Host_Success = False
 			return "Success"
 		elif Create_Host_Error:
+			Create_Host_Error = False
 			return "Error"
 		return "Nothing"
 
