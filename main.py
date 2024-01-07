@@ -75,7 +75,7 @@ def server():
 
 @app.route("/check-host")
 def hostCheck():
-	While True:
+	while True:
 		time.sleep(0.001)
 		global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
 		if Create_Host_Success:
