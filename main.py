@@ -72,9 +72,9 @@ def server():
 def group():
 	print(request.json)
 	global New_Group, groupName, groupDescription, groupMaxFunds
-	groupName = request.json['Name']
-	groupDescription = request.json['Description']
-	groupMaxFunds = request.json['Max Funds']
+	groupName = json.loads(request.json)['Name']
+	groupDescription = json.loads(request.json)['Description']
+	groupMaxFunds = json.loads(request.json)['Max Funds']
 	New_Group = True
 	return True
 
