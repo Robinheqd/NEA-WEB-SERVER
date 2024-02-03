@@ -69,7 +69,7 @@ def server():
 			"auctionHostEmail": cauctionHostEmail,
 			"auctionTitle": auctionTitle,
 			"auctionDescription": auctionDescription,
-			"auctionStartPrice": auctionStart,
+			"auctionStartPrice": auctionStartPrice,
 			"auctionLength": auctionLength
 			}
 			New_Auction = False
