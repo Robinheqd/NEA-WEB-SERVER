@@ -42,6 +42,7 @@ Login_Host_Email = ""
 
 Login_Host_Error = False
 Login_Host_Success = False
+Login_Host_Name = ""
 
 @app.route('/')
 def index():
@@ -208,6 +209,7 @@ def validate():
 		Create_Group_Error = True
 	elif json.loads(request.json)['Result'] == "Host-Login":
 		Login_Host_Success = True
+		Login_Host_Name = json.loads(request.json)['Username']
 	elif json.loads(request.json)['Result']  == "Host-Invalid":
 		Login_Host_Error = True
 	return "done"
@@ -227,7 +229,7 @@ def hostLoginCheck():
 		return "Error"
 	elif Login_Host_Success:
 		Login_Host_Success = False
-		return "Success"
+		return Login_Host_Name
 	return "Nothing"
 	
 if __name__ == "__main__":
