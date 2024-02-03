@@ -5,6 +5,7 @@ import time
 app = Flask(__name__)
 
 New_Group = False
+groupUserEmail = ""
 groupName = ""
 groupDescription = ""
 groupMaxFunds = 0
@@ -18,7 +19,8 @@ auctionHostName = ""
 auctionHostEmail = ""
 
 New_Auction = False
-auctionName = ""
+cauctionHostEmail = ""
+auctionTitle = ""
 auctionDescription = ""
 auctionStartPrice = 0
 auctionLength = 0
@@ -35,7 +37,7 @@ def index():
 def server():
 	while True:
 		time.sleep(0.001)
-		global New_Group, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionName, auctionDescription, auctionStartPrice, auctionLength
+		global New_Group, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength
 		if New_Group:
 			data = {
 			"action": "create-group",
@@ -64,7 +66,8 @@ def server():
 		elif New_Auction:
 			data = {
 			"action": "create-auction",
-			"auctionName": auctionName,
+			"auctionHostEmail": cauctionHostEmail,
+			"auctionTitle": auctionTitle,
 			"auctionDescription": auctionDescription,
 			"auctionStartPrice": auctionStart,
 			"auctionLength": auctionLength
@@ -109,6 +112,16 @@ def host():
 	auctionHostName = json.loads(request.json)['Name']
 	auctionHostEmail = json.loads(request.json)['Email']
 	New_Auction_Host = True
+	return "Done"
+
+@app.route("/create-auction", methods=['POST'])
+def auction():
+	global New_Auction, cauctionHostEmail, auctionTitle, auctionDescription, auctionStartPrice, auctionLength
+	cauctionHostEmail = json.loads(request.json)['Email']
+	auctionTitle = json.loads(request.json)['Title']
+	auctionDescription = json.loads(request.json)['Description']
+	auctionStartPrice = json.loads(request.json)['Price']
+	auctionLength = json.loads(request.json)['Length']
 	return "Done"
 
 @app.route("/validate", methods=['POST'])
