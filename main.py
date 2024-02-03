@@ -29,6 +29,10 @@ Create_Host_Error = False
 
 Create_Host_Success = False
 
+Create_Auction_Error = False
+
+Create_Auction_Success = False
+
 @app.route('/')
 def index():
 	return "Nothing to see here"
@@ -80,12 +84,25 @@ def server():
 def hostCheck():
 	while True:
 		time.sleep(0.001)
-		global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
+		global Create_Host_Error, Create_Host_Success
 		if Create_Host_Success:
 			Create_Host_Success = False
 			return "Success"
 		elif Create_Host_Error:
 			Create_Host_Error = False
+			return "Error"
+		return "Nothing"
+
+@app.route("/check-auction")
+def auctionCheck():
+	while True:
+		time.sleep(0.001)
+		global Create_Auction_Error, Create_Auction_Success
+		if Create_Auction_Error:
+			Create_Auction_Error = False
+			return "Success"
+		elif Create_Auction_Success:
+			Create_Auction_Success = False
 			return "Error"
 		return "Nothing"
 
@@ -127,11 +144,15 @@ def auction():
 
 @app.route("/validate", methods=['POST'])
 def validate():
-	global Create_Host_Error, errorHostEmail, Create_Host_Success, successHostEmail
+	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success
 	if json.loads(request.json)['Result'] == "Host-Created":
 		Create_Host_Success = True
 	elif json.loads(request.json)['Result'] == "Host-Exists":
 		Create_Host_Error = True
+	elif json.loads(request.json)['Result'] == "Auction-Created":
+		Create_Auction_Success = True
+	elif json.loads(request.json)['Result'] == "Auction-Exists":
+		Create_Auction_Error = True
 	return "done"
 
 if __name__ == "__main__":
