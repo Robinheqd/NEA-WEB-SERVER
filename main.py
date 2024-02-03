@@ -122,6 +122,7 @@ def auction():
 	auctionDescription = json.loads(request.json)['Description']
 	auctionStartPrice = json.loads(request.json)['Price']
 	auctionLength = json.loads(request.json)['Length']
+	New_Auction = True
 	return "Done"
 
 @app.route("/validate", methods=['POST'])
