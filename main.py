@@ -190,7 +190,7 @@ def auctionCheck():
 
 @app.route("/validate", methods=['POST'])
 def validate():
-	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success
+	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name
 	if json.loads(request.json)['Result'] == "Host-Created":
 		Create_Host_Success = True
 	elif json.loads(request.json)['Result'] == "Host-Exists":
@@ -223,7 +223,7 @@ def hostLogin():
 	
 @app.route("/check-host-login")
 def hostLoginCheck():
-	global Login_Host_Error, Login_Host_Success
+	global Login_Host_Error, Login_Host_Success, Login_Host_Name
 	if Login_Host_Error:
 		Login_Host_Error = False
 		return "Error"
