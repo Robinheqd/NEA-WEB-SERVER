@@ -100,10 +100,10 @@ def auctionCheck():
 		global Create_Auction_Error, Create_Auction_Success
 		if Create_Auction_Error:
 			Create_Auction_Error = False
-			return "Success"
+			return "Error"
 		elif Create_Auction_Success:
 			Create_Auction_Success = False
-			return "Error"
+			return "Success"
 		return "Nothing"
 
 @app.route("/create-group", methods=['POST'])
