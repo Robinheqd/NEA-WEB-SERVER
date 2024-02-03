@@ -34,6 +34,9 @@ Create_Auction_Success = False
 Create_Member_Error = False
 Create_Member_Success = False
 
+Create_Group_Error = False
+Create_Group_Success = False
+
 @app.route('/')
 def index():
 	return "Nothing to see here"
@@ -42,10 +45,11 @@ def index():
 def server():
 	while True:
 		time.sleep(0.001)
-		global New_Group, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength
+		global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength
 		if New_Group:
 			data = {
 			"action": "create-group",
+			"auctionMemberEmail": groupUserEmail,
 			"groupName": groupName,
 			"groupDescription": groupDescription,
 			"groupMaxFundsPerUser": groupMaxFunds
@@ -120,9 +124,23 @@ def memberCheck():
 			return "Success"
 		return "Nothing"
 
+@app.route("/check-group")
+def groupCheck():
+	while True:
+		time.sleep(0.001)
+		global Create_Group_Error, Create_Group_Success
+		if Create_Group_Error:
+			Create_Group_Error = False
+			return "Error"
+		elif Create_Group_Success:
+			Create_Group_Success = False
+			return "Success"
+		return "Nothing"
+
 @app.route("/create-group", methods=['POST'])
 def group():
-	global New_Group, groupName, groupDescription, groupMaxFunds
+	global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds
+	groupUserEmail = json.loads(request.json)['Email']
 	groupName = json.loads(request.json)['Name']
 	groupDescription = json.loads(request.json)['Description']
 	groupMaxFunds = json.loads(request.json)['Max Funds']
@@ -158,7 +176,7 @@ def auction():
 
 @app.route("/validate", methods=['POST'])
 def validate():
-	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success
+	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success
 	if json.loads(request.json)['Result'] == "Host-Created":
 		Create_Host_Success = True
 	elif json.loads(request.json)['Result'] == "Host-Exists":
@@ -171,6 +189,10 @@ def validate():
 		Create_Member_Success = True
 	elif json.loads(request.json)['Result'] == "Member-Exists":
 		Create_Member_Error = True
+	elif json.loads(request.json)['Result'] == "Group-Created":
+		Create_Group_Success = True
+	elif json.loads(request.json)['Result'] == "Group-Exists":
+		Create_Group_Error = True
 	return "done"
 
 if __name__ == "__main__":
