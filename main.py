@@ -109,6 +109,7 @@ def server():
 			"action": "member-login",
 			"auctionMemberEmail": Login_Member_Email
 			}
+			New_Login_Member = False
 			return json.dumps(data)
 		return "Nothing"
 
