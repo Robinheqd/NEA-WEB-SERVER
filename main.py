@@ -258,7 +258,7 @@ def memberLogin():
 	return "Done"
 	
 @app.route("/check-member-login")
-def hostLoginCheck():
+def memberLoginCheck():
 	global Login_Member_Error, Login_Member_Success, Login_Member_Name
 	if Login_Member_Error:
 		Login_Member_Error = False
