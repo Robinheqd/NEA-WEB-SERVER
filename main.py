@@ -54,6 +54,14 @@ Login_Member_Name = ""
 Host_Get_Auctions = False
 Host_Get_Auctions_Email = ""
 Host_Get_Auctions_Result = ""
+Host_Get_Auctions_Result_Worked = False
+
+Host_Get_Auction_Manage_Result = []
+Host_Get_Auction_Manage_Worked = False
+
+Host_Auction_Manage = False
+Host_Auction_Manage_Email = ""
+Host_Auction_Manage_Title = ""
 
 @app.route('/')
 def index():
@@ -63,7 +71,7 @@ def index():
 def server():
 	while True:
 		time.sleep(0.001)
-		global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength, New_Login_Host, Login_Host_Email, New_Login_Member, Login_Member_Email, Host_Get_Auctions, Host_Get_Auctions_Email
+		global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength, New_Login_Host, Login_Host_Email, New_Login_Member, Login_Member_Email, Host_Get_Auctions, Host_Get_Auctions_Email, Host_Auction_Manage, Host_Auction_Manage_Email, Host_Auction_Manage_Title
 		if New_Group:
 			data = {
 			"action": "create-group",
@@ -121,6 +129,13 @@ def server():
 			"auctionHostEmail": Host_Get_Auctions_Email
 			}
 			Host_Get_Auctions = False
+			return json.dumps(data)
+		elif Host_Auction_Manage:
+			data = {
+			"action": "manage-auction",
+			"auctionHostEmail": Host_Auction_Manage_Email,
+			"auctionTitle": Host_Auction_Manage_Title
+			}
 			return json.dumps(data)
 		return "Nothing"
 
@@ -215,7 +230,7 @@ def auctionCheck():
 
 @app.route("/validate", methods=['POST'])
 def validate():
-	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result
+	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked, Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked
 	if json.loads(request.json)['Result'] == "Host-Created":
 		Create_Host_Success = True
 	elif json.loads(request.json)['Result'] == "Host-Exists":
@@ -243,7 +258,16 @@ def validate():
 	elif json.loads(request.json)['Result'] == "Member-Invalid":
 		Login_Member_Error = True
 	elif json.loads(request.json)['Result'] == "Auctions-Found":
+		Host_Get_Auctions_Result_Worked = True
 		Host_Get_Auctions_Result = json.loads(request.json)['Auctions']
+	elif json.loads(request.json)['Result'] == "Auction-Found":
+		Host_Get_Auction_Manage_Worked = True
+		Host_Get_Auction_Manage_Result = {
+		"StartPrice": json.loads(request.json)['StartPrice'],
+		"HighestBid": json.loads(request.json)['HighestBid'],
+		"EndDate": json.loads(request.json)['EndDate'],
+		"Description": json.loads(request.json)['Description']
+		}
 	return "done"
 
 @app.route("/login-host", methods=['POST'])
@@ -273,8 +297,29 @@ def hostAuctionGet():
 
 @app.route("/get-auction-list")
 def hostAuctionReturn():
-	global Host_Get_Auctions_Result
-	return Host_Get_Auctions_Result
+	global Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked
+	if Host_Get_Auctions_Result_Worked:
+		Host_Get_Auctions_Result_Worked = False
+		return Host_Get_Auctions_Result
+	else:
+		return "Nothing"
+
+@app.route("/manage-auction", methods=['POST'])
+def hostAuctionManage():
+	global Host_Auction_Manage, Host_Auction_Manage_Email, Host_Auction_Manage_Title
+	Host_Auction_Manage = True
+	Host_Auction_Manage_Email = json.loads(request.json)['Email']
+	Host_Auction_Manage_Title = json.loads(request.json)['Title']
+	return "Done"
+
+@app.route("/get-manage-auction")
+def hostGetAuctionManage():
+	global Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked
+	if Host_Get_Auction_Manage_Worked:
+		Host_Get_Auction_Manage_Worked = False
+		return json.dumps(Host_Get_Auction_Manage_Result)
+	else:
+		return "Nothing"
 
 @app.route("/login-member", methods=['POST'])
 def memberLogin():
