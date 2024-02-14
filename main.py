@@ -136,6 +136,7 @@ def server():
 			"auctionHostEmail": Host_Auction_Manage_Email,
 			"auctionTitle": Host_Auction_Manage_Title
 			}
+			Host_Auction_Manage = False
 			return json.dumps(data)
 		return "Nothing"
 
