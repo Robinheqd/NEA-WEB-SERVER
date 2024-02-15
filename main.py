@@ -283,7 +283,7 @@ def validate():
 		"Description": json.loads(request.json)['Description']
 		}
 	elif json.loads(request.json)['Result'] == "Groups-Found":
-		Member_Get_Groups_Result_Worked = True
+		Member_Get_Group_Result_Worked = True
 		Member_Get_Group_Result = json.loads(request.json)['Groups']
 	return "done"
 
