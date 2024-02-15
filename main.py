@@ -282,6 +282,9 @@ def validate():
 		"EndDate": json.loads(request.json)['EndDate'],
 		"Description": json.loads(request.json)['Description']
 		}
+	elif json.loads(request.json)['Result'] == "Groups-Found":
+		Member_Get_Groups_Result_Workded = True
+		Member_Get_Group_Result = json.loads(request.json)['Groups']
 	return "done"
 
 @app.route("/login-host", methods=['POST'])
