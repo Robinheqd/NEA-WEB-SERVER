@@ -69,6 +69,13 @@ Member_Get_Groups_Email = ""
 Member_Get_Group_Result = ""
 Member_Get_Group_Result_Worked = False
 
+Member_Join_Group = False
+Member_Join_Group_Email = ""
+Member_Join_Group_Name = ""
+
+Member_Join_Group_Success = False
+Member_Join_Group_Error = False
+
 @app.route('/')
 def index():
 	return "Nothing to see here"
@@ -77,7 +84,7 @@ def index():
 def server():
 	while True:
 		time.sleep(0.001)
-		global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength, New_Login_Host, Login_Host_Email, New_Login_Member, Login_Member_Email, Host_Get_Auctions, Host_Get_Auctions_Email, Host_Auction_Manage, Host_Auction_Manage_Email, Host_Auction_Manage_Title, Member_Get_Groups, Member_Get_Groups_Email
+		global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength, New_Login_Host, Login_Host_Email, New_Login_Member, Login_Member_Email, Host_Get_Auctions, Host_Get_Auctions_Email, Host_Auction_Manage, Host_Auction_Manage_Email, Host_Auction_Manage_Title, Member_Get_Groups, Member_Get_Groups_Email, Member_Join_Group, Member_Join_Group_Email, Member_Join_Group_Name
 		if New_Group:
 			data = {
 			"action": "create-group",
@@ -150,6 +157,14 @@ def server():
 			"auctionMemberEmail": Member_Get_Groups_Email
 			}
 			Member_Get_Groups = False
+			return json.dumps(data)
+		elif Member_Join_Group:
+			data = {
+			"action": "join-group",
+			"auctionMemberEmail": Member_Join_Group_Email,
+			"groupName": Member_Join_Group_Name
+			}
+			Member_Join_Group = False
 			return json.dumps(data)
 		return "Nothing"
 
@@ -244,7 +259,7 @@ def auctionCheck():
 
 @app.route("/validate", methods=['POST'])
 def validate():
-	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked, Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked, Member_Get_Group_Result, Member_Get_Group_Result_Worked
+	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked, Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked, Member_Get_Group_Result, Member_Get_Group_Result_Worked, Member_Join_Group_Error, Member_Join_Group_Success
 	if json.loads(request.json)['Result'] == "Host-Created":
 		Create_Host_Success = True
 	elif json.loads(request.json)['Result'] == "Host-Exists":
@@ -285,6 +300,10 @@ def validate():
 	elif json.loads(request.json)['Result'] == "Groups-Found":
 		Member_Get_Group_Result_Worked = True
 		Member_Get_Group_Result = json.loads(request.json)['Groups']
+	elif json.loads(request.json)['Result'] == "Group-Joined":
+		Member_Join_Group_Success = True
+	elif json.loads(request.json)['Result'] == "Group-Invalid":
+		Member_Join_Group_Error = True
 	return "done"
 
 @app.route("/login-host", methods=['POST'])
@@ -336,6 +355,25 @@ def memberGroupReturn():
 		return Member_Get_Group_Result
 	else:
 		return "Nothing"
+		
+@app.route("/join-group", methods=['POST'])
+def memberGroupJoin():
+	global Member_Join_Group, Member_Join_Group_Email, Member_Join_Group_Name
+	Member_Join_Group = True
+	Member_Join_Group_Email = json.loads(request.json)['Email']
+	Member_Join_Group_Name = json.loads(request.json)['Name']
+	return "Done"
+
+@app.route("/check-join-group")
+def memberCheckGroupJoin():
+	global Member_Join_Group_Success, Member_Join_Group_Error
+	if Member_Join_Group_Success:
+		Member_Join_Group_Success = False
+		return "Success"
+	elif Member_Join_Group_Error:
+		Member_Join_Group_Error = False
+		return "Error"
+	return "Nothing"
 
 @app.route("/manage-auction", methods=['POST'])
 def hostAuctionManage():
