@@ -98,8 +98,6 @@ Join_Auction_Title = ""
 Join_Auction_Success = False
 Join_Auction_Error = False
 
-Member_Load_Auction, Member_Load_Auction_Name, Member_Load_Auction_Title, Member_Load_Auction_Worked, Member_Load_Auction_Result
-
 Member_Load_Auction = False
 Member_Load_Auction_Name = ""
 Member_Load_Auction_Title = ""
