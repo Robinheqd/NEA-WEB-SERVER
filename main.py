@@ -105,6 +105,14 @@ Member_Load_Auction_Title = ""
 Member_Load_Auction_Worked = False
 Member_Load_Auction_Result = ""
 
+Place_Bid = False
+Place_Bid_Name = ""
+Place_Bid_Title = ""
+Place_Bid_Amount = ""
+
+Place_Bid_Success = False
+Place_Bid_Error = False
+
 @app.route('/')
 def index():
 	return "Nothing to see here"
@@ -113,7 +121,7 @@ def index():
 def server():
 	while True:
 		time.sleep(0.001)
-		global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength, New_Login_Host, Login_Host_Email, New_Login_Member, Login_Member_Email, Host_Get_Auctions, Host_Get_Auctions_Email, Host_Auction_Manage, Host_Auction_Manage_Email, Host_Auction_Manage_Title, Member_Get_Groups, Member_Get_Groups_Email, Member_Join_Group, Member_Join_Group_Email, Member_Join_Group_Name, Group_Data, Group_Data_Name, Group_Data_Email, Member_Add_Funds, Member_Add_Funds_Email, Member_Add_Funds_Name, Member_Add_Funds_Amount, Join_Auction, Join_Auction_Name, Join_Auction_Title, Member_Load_Auction, Member_Load_Auction_Name, Member_Load_Auction_Title
+		global New_Group, groupUserEmail, groupName, groupDescription, groupMaxFunds, New_Auction_User, auctionMemberName, auctionMemberEmail, New_Auction_Host, auctionHostEmail, auctionHostName, New_Auction, auctionTitle, auctionDescription, auctionStartPrice, auctionLength, New_Login_Host, Login_Host_Email, New_Login_Member, Login_Member_Email, Host_Get_Auctions, Host_Get_Auctions_Email, Host_Auction_Manage, Host_Auction_Manage_Email, Host_Auction_Manage_Title, Member_Get_Groups, Member_Get_Groups_Email, Member_Join_Group, Member_Join_Group_Email, Member_Join_Group_Name, Group_Data, Group_Data_Name, Group_Data_Email, Member_Add_Funds, Member_Add_Funds_Email, Member_Add_Funds_Name, Member_Add_Funds_Amount, Join_Auction, Join_Auction_Name, Join_Auction_Title, Member_Load_Auction, Member_Load_Auction_Name, Member_Load_Auction_Title, Place_Bid, Place_Bid_Name, Place_Bid_Title, Place_Bid_Amount
 		if New_Group:
 			data = {
 			"action": "create-group",
@@ -220,13 +228,22 @@ def server():
 			}
 			Join_Auction = False
 			return json.dumps(data)
-		if Member_Load_Auction:
+		elif Member_Load_Auction:
 			data = {
 			"action": "member-load-auction",
 			"groupName": Member_Load_Auction_Name,
 			"auctionTitle": Member_Load_Auction_Title
 			}
 			Member_Load_Auction = False
+			return json.dumps(data)
+		elif Place_Bid:
+			data = {
+			"action": "place-bid",
+			"groupName": Place_Bid_Name,
+			"auctionTitle": Place_Bid_Title,
+			"amount": Place_Bid_Amount
+			}
+			Place_Bid = False
 			return json.dumps(data)
 		return "Nothing"
 
@@ -321,7 +338,7 @@ def auctionCheck():
 
 @app.route("/validate", methods=['POST'])
 def validate():
-	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked, Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked, Member_Get_Group_Result, Member_Get_Group_Result_Worked, Member_Join_Group_Error, Member_Join_Group_Success, Group_Data_Result_Worked, Group_Data_Result, Member_Add_Funds_Success, Member_Add_Funds_Result, Join_Auction_Success, Join_Auction_Error, Member_Load_Auction_Worked, Member_Load_Auction_Result
+	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked, Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked, Member_Get_Group_Result, Member_Get_Group_Result_Worked, Member_Join_Group_Error, Member_Join_Group_Success, Group_Data_Result_Worked, Group_Data_Result, Member_Add_Funds_Success, Member_Add_Funds_Result, Join_Auction_Success, Join_Auction_Error, Member_Load_Auction_Worked, Member_Load_Auction_Result, Place_Bid_Success, Place_Bid_Error
 	if json.loads(request.json)['Result'] == "Host-Created":
 		Create_Host_Success = True
 	elif json.loads(request.json)['Result'] == "Host-Exists":
@@ -379,6 +396,10 @@ def validate():
 	elif json.loads(request.json)['Result'] == "Member-Auction-Load":
 		Member_Load_Auction_Worked = True
 		Member_Load_Auction_Result = json.loads(request.json)['Auction']
+	elif json.loads(request.json)['Result'] == "Bid-Placed":
+		Place_Bid_Success = True
+	elif json.loads(request.json)['Result'] == "Bid-Reject":
+		Place_Bid_Error = True
 	return "done"
 
 @app.route("/login-host", methods=['POST'])
@@ -552,6 +573,26 @@ def memberGetLoadAuctin():
 	if Member_Load_Auction_Worked:
 		Member_Load_Auction_Worked = False
 		return Member_Load_Auction_Result
+	return "Nothing"
+
+@app.route("/place-bid", methods=['POST'])
+def placeBid():
+	global Place_Bid, Place_Bid_Name, Place_Bid_Title, Place_Bid_Amount
+	Place_Bid = True
+	Place_Bid_Name = json.loads(request.json)['groupName']
+	Place_Bid_Title = json.loads(request.json)['auctionTitle']
+	Place_Bid_Amount = json.loads(request.json)['Amount']
+	return "Done"
+
+@app.route("/bid-result")
+def placeBidResult():
+	global Place_Bid_Success, Place_Bid_Error
+	if Place_Bid_Success:
+		Place_Bid_Success = False
+		return "Success"
+	elif Place_Bid_Error:
+		Place_Bid_Error = False
+		return "Error"
 	return "Nothing"
 
 if __name__ == "__main__":
