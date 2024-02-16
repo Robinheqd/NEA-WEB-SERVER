@@ -543,7 +543,7 @@ def memberLoadAuction():
 	global Member_Load_Auction, Member_Load_Auction_Name, Member_Load_Auction_Title
 	Member_Load_Auction = True
 	Member_Load_Auction_Name = json.loads(request.json)['groupName']
-	Member_Load_Auction_Title = json.loads(request.json)[Title]
+	Member_Load_Auction_Title = json.loads(request.json)['Title']
 	return "Done"
 
 @app.route("/get-member-auction")
