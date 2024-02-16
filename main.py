@@ -456,7 +456,7 @@ def memberGroupData():
 	Group_Data_Email = json.loads(request.json)['Email']
 	return "Done"
 
-@app.route("get-group-data")
+@app.route("/get-group-data")
 def memberGetGroupData():
 	global Group_Data_Result_Worked, Group_Data_Result
 	if Group_Data_Result_Worked:
@@ -465,7 +465,7 @@ def memberGetGroupData():
 	else:
 		return "Nothing"
 	
-@app.route("add-funds", methods=['POST'])
+@app.route("/add-funds", methods=['POST'])
 def memberAddFunds():
 	global Member_Add_Funds, Member_Add_Funds_Email, Member_Add_Funds_Name, Member_Add_Funds_Amount
 	Member_Add_Funds = True
