@@ -58,6 +58,7 @@ Host_Get_Auctions_Result_Worked = False
 
 Host_Get_Auction_Manage_Result = []
 Host_Get_Auction_Manage_Worked = False
+Host_Get_Auction_Manage_Ended = False
 
 Host_Auction_Manage = False
 Host_Auction_Manage_Email = ""
@@ -112,6 +113,7 @@ Place_Bid_Amount = ""
 
 Place_Bid_Success = False
 Place_Bid_Error = False
+Place_Bid_Result = ""
 
 @app.route('/')
 def index():
@@ -338,7 +340,7 @@ def auctionCheck():
 
 @app.route("/validate", methods=['POST'])
 def validate():
-	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked, Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked, Member_Get_Group_Result, Member_Get_Group_Result_Worked, Member_Join_Group_Error, Member_Join_Group_Success, Group_Data_Result_Worked, Group_Data_Result, Member_Add_Funds_Success, Member_Add_Funds_Result, Join_Auction_Success, Join_Auction_Error, Member_Load_Auction_Worked, Member_Load_Auction_Result, Place_Bid_Success, Place_Bid_Error
+	global Create_Host_Error, Create_Host_Success, Create_Auction_Error, Create_Auction_Success, Create_Member_Error, Create_Member_Success, Create_Group_Error, Create_Group_Success, Login_Host_Error, Login_Host_Success, Login_Host_Name, Login_Member_Error, Login_Member_Success, Login_Member_Name, Host_Get_Auctions_Result, Host_Get_Auctions_Result_Worked, Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked, Member_Get_Group_Result, Member_Get_Group_Result_Worked, Member_Join_Group_Error, Member_Join_Group_Success, Group_Data_Result_Worked, Group_Data_Result, Member_Add_Funds_Success, Member_Add_Funds_Result, Join_Auction_Success, Join_Auction_Error, Member_Load_Auction_Worked, Member_Load_Auction_Result, Place_Bid_Success, Place_Bid_Error, Host_Get_Auction_Manage_Ended, Place_Bid_Result
 	if json.loads(request.json)['Result'] == "Host-Created":
 		Create_Host_Success = True
 	elif json.loads(request.json)['Result'] == "Host-Exists":
@@ -371,11 +373,15 @@ def validate():
 	elif json.loads(request.json)['Result'] == "Auction-Found":
 		Host_Get_Auction_Manage_Worked = True
 		Host_Get_Auction_Manage_Result = {
+		"Result": "NONE",
 		"StartPrice": json.loads(request.json)['StartPrice'],
 		"HighestBid": json.loads(request.json)['HighestBid'],
 		"EndDate": json.loads(request.json)['EndDate'],
 		"Description": json.loads(request.json)['Description']
 		}
+	elif json.loads(request.json)['Result'] == "Auction-Not-Found":
+		Host_Get_Auction_Manage_Ended = True
+		Host_Get_Auction_Manage_Result = {"Result": json.loads(request.json)['Auction']}
 	elif json.loads(request.json)['Result'] == "Groups-Found":
 		Member_Get_Group_Result_Worked = True
 		Member_Get_Group_Result = json.loads(request.json)['Groups']
@@ -400,6 +406,7 @@ def validate():
 		Place_Bid_Success = True
 	elif json.loads(request.json)['Result'] == "Bid-Reject":
 		Place_Bid_Error = True
+		Place_Bid_Result = json.loads(request.json)['Auction']
 	return "done"
 
 @app.route("/login-host", methods=['POST'])
@@ -481,9 +488,12 @@ def hostAuctionManage():
 
 @app.route("/get-manage-auction")
 def hostGetAuctionManage():
-	global Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked
+	global Host_Get_Auction_Manage_Result, Host_Get_Auction_Manage_Worked, Host_Get_Auction_Manage_Ended
 	if Host_Get_Auction_Manage_Worked:
 		Host_Get_Auction_Manage_Worked = False
+		return json.dumps(Host_Get_Auction_Manage_Result)
+	elif Host_Get_Auction_Manage_Ended:
+		Host_Get_Auction_Manage_Ended = False
 		return json.dumps(Host_Get_Auction_Manage_Result)
 	else:
 		return "Nothing"
@@ -586,13 +596,13 @@ def placeBid():
 
 @app.route("/bid-result")
 def placeBidResult():
-	global Place_Bid_Success, Place_Bid_Error
+	global Place_Bid_Success, Place_Bid_Error, Place_Bid_Result
 	if Place_Bid_Success:
 		Place_Bid_Success = False
 		return "Success"
 	elif Place_Bid_Error:
 		Place_Bid_Error = False
-		return "Error"
+		return Place_Bid_Result
 	return "Nothing"
 
 if __name__ == "__main__":
